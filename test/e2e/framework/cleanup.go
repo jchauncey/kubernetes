@@ -16,7 +16,9 @@ limitations under the License.
 
 package framework
 
-import "sync"
+import (
+	"sync"
+)
 
 type CleanupActionHandle *int
 
@@ -48,10 +50,15 @@ func RemoveCleanupAction(p CleanupActionHandle) {
 func RunCleanupActions() {
 	list := []func(){}
 	func() {
+		Logf("CLEANUP ACTIONS: LOCKING")
 		cleanupActionsLock.Lock()
+		Logf("CLEANUP ACTIONS: LOCKED")
+		Logf("CLEANUP ACTIONS: UNLOCKING")
 		defer cleanupActionsLock.Unlock()
+		Logf("CLEANUP ACTIONS: UNLOCKED")
 		for _, fn := range cleanupActions {
 			list = append(list, fn)
+			Logf("CLEANUP ACTIONS: %s", len(list))
 		}
 	}()
 	// Run unlocked.
